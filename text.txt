@@ -1,0 +1,13 @@
+  homie / 0xb4e3f9fffeb358b5 / $homie → 3.0
+  homie / 0xb4e3f9fffeb358b5 / $name → comandament
+  homie / 0xb4e3f9fffeb358b5 / $state → ready
+  homie / 0xb4e3f9fffeb358b5 / $nodes → battery,action,linkquality,update_state,update_available,update
+
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / $name → My thermostat
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / $properties → temperature
+
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / temperature → 22 
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / temperature / $name → Temperature
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / temperature / $unit → °C
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / temperature / $datatype → integer
+  homie / 0xb4e3f9fffeb358b5 / mythermostat / temperature / $settable → true

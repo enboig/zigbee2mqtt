@@ -50,6 +50,7 @@ export default class Bridge extends Extension {
             // Below are deprecated
             'config/last_seen': this.configLastSeen,
             'config/homeassistant': this.configHomeAssistant,
+            'config/homie': this.configHomie,
             'config/elapsed': this.configElapsed,
             'config/log_level': this.configLogLevel,
         };
@@ -158,6 +159,10 @@ export default class Bridge extends Extension {
 
         if (newSettings.hasOwnProperty('homeassistant')) {
             await this.enableDisableExtension(newSettings.homeassistant, 'HomeAssistant');
+        }
+
+        if (newSettings.hasOwnProperty('homie')) {
+            await this.enableDisableExtension(newSettings.homie, 'Homie');
         }
 
         if (newSettings.hasOwnProperty('advanced') && newSettings.advanced.hasOwnProperty('log_level')) {
@@ -288,6 +293,20 @@ export default class Bridge extends Extension {
 
         await this.enableDisableExtension(value, 'HomeAssistant');
         settings.set(['homeassistant'], value);
+        this.publishInfo();
+        return utils.getResponse(message, {value}, null);
+    }
+
+    // Deprecated
+    @bind async configHomie(message: string | KeyValue): Promise<MQTTResponse> {
+        const allowed = [true, false];
+        const value = this.getValue(message);
+        if (typeof value !== 'boolean' || !allowed.includes(value)) {
+            throw new Error(`'${value}' is not an allowed value, allowed: ${allowed}`);
+        }
+
+        await this.enableDisableExtension(value, 'Homie');
+        settings.set(['homie'], value);
         this.publishInfo();
         return utils.getResponse(message, {value}, null);
     }
@@ -449,6 +468,7 @@ export default class Bridge extends Extension {
             throw new Error('No device has joined since start');
         }
 
+        //TODO: Homie
         const from = deviceAndHasLast ? this.lastJoinedDeviceIeeeAddr : message.from;
         const to = message.to;
         const homeAssisantRename = message.hasOwnProperty('homeassistant_rename') ?

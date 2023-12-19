@@ -16,6 +16,10 @@ objectAssignDeep(schema, schemaJson);
     delete schema.properties.advanced.properties.homeassistant_legacy_entity_attributes;
     delete schema.properties.advanced.properties.homeassistant_legacy_triggers;
     delete schema.properties.advanced.properties.homeassistant_status_topic;
+    delete schema.properties.advanced.properties.homie_discovery_topic;
+    delete schema.properties.advanced.properties.homie_legacy_entity_attributes;
+    delete schema.properties.advanced.properties.homie_legacy_triggers;
+    delete schema.properties.advanced.properties.homie_status_topic;
     delete schema.properties.advanced.properties.soft_reset_timeout;
     delete schema.properties.advanced.properties.report;
     delete schema.properties.advanced.properties.baudrate;
@@ -139,6 +143,28 @@ function loadSettingsWithDefaults(): void {
         // @ts-ignore
         _settingsWithDefaults.homeassistant = {};
         objectAssignDeep(_settingsWithDefaults.homeassistant, defaults, sLegacy, s);
+    }
+
+    //TODO: Homie mirar si el tòpic cal que sigui "hass/status"
+    if (_settingsWithDefaults.homie) {
+        const defaults = {discovery_topic: 'homie', status_topic: 'hass/status',
+            legacy_entity_attributes: true, legacy_triggers: true};
+        const sLegacy = {};
+        if (_settingsWithDefaults.advanced) {
+            for (const key of ['homie_legacy_triggers', 'homie_discovery_topic',
+                'homie_legacy_entity_attributes', 'homie_status_topic']) {
+                // @ts-ignore
+                if (_settingsWithDefaults.advanced[key] !== undefined) {
+                    // @ts-ignore
+                    sLegacy[key.replace('homie_', '')] = _settingsWithDefaults.advanced[key];
+                }
+            }
+        }
+
+        const s = typeof _settingsWithDefaults.homie === 'object' ? _settingsWithDefaults.homie : {};
+        // @ts-ignore
+        _settingsWithDefaults.homie = {};
+        objectAssignDeep(_settingsWithDefaults.homie, defaults, sLegacy, s);
     }
 
     if (_settingsWithDefaults.availability || _settingsWithDefaults.advanced?.availability_timeout) {

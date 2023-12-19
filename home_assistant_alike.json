@@ -1,0 +1,148 @@
+{
+  "homie/sensor/0xb4e3f9fffeb358b5/battery/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "device_class": "battery",
+    "enabled_by_default": true,
+    "entity_category": "diagnostic",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament battery",
+    "state_class": "measurement",
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_battery_zigbee2mqtt_homie",
+    "unit_of_measurement": "%",
+    "value_template": "{{ value_json.battery }}"
+  },
+  "homie/sensor/0xb4e3f9fffeb358b5/action/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "enabled_by_default": true,
+    "icon": "mdi:gesture-double-tap",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament action",
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_action_zigbee2mqtt_homie",
+    "value_template": "{{ value_json.action }}"
+  },
+  "homie/sensor/0xb4e3f9fffeb358b5/linkquality/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "enabled_by_default": false,
+    "entity_category": "diagnostic",
+    "icon": "mdi:signal",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament linkquality",
+    "state_class": "measurement",
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_linkquality_zigbee2mqtt_homie",
+    "unit_of_measurement": "lqi",
+    "value_template": "{{ value_json.linkquality }}"
+  },
+  "homie/sensor/0xb4e3f9fffeb358b5/update_state/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "enabled_by_default": false,
+    "entity_category": "diagnostic",
+    "icon": "mdi:update",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament update state",
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_update_state_zigbee2mqtt_homie",
+    "value_template": "{{ value_json['update']['state'] }}"
+  },
+  "homie/binary_sensor/0xb4e3f9fffeb358b5/update_available/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "device_class": "update",
+    "enabled_by_default": false,
+    "entity_category": "diagnostic",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament update available",
+    "payload_off": false,
+    "payload_on": true,
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_update_available_zigbee2mqtt_homie",
+    "value_template": "{{ value_json['update']['state'] == \"available\" }}"
+  },
+  "homie/update/0xb4e3f9fffeb358b5/update/config": {
+    "availability": [
+      {
+        "topic": "zigbee2mqtt_homie/bridge/state",
+        "value_template": "{{ value_json.state }}"
+      }
+    ],
+    "command_topic": "zigbee2mqtt_homie/bridge/request/device/ota_update/update",
+    "device": {
+      "identifiers": ["zigbee2mqtt_0xb4e3f9fffeb358b5"],
+      "manufacturer": "IKEA",
+      "model": "STYRBAR remote control (E2001/E2002)",
+      "name": "comandament",
+      "sw_version": "1.0.024"
+    },
+    "device_class": "firmware",
+    "entity_picture": "https://github.com/Koenkk/zigbee2mqtt/raw/master/images/logo.png",
+    "json_attributes_topic": "zigbee2mqtt_homie/comandament",
+    "latest_version_template": "{{ value_json['update']['latest_version'] }}",
+    "latest_version_topic": "zigbee2mqtt_homie/comandament",
+    "name": "comandament",
+    "payload_install": "{\"id\": \"0xb4e3f9fffeb358b5\"}",
+    "state_topic": "zigbee2mqtt_homie/comandament",
+    "unique_id": "0xb4e3f9fffeb358b5_update_zigbee2mqtt_homie",
+    "value_template": "{{ value_json['update']['installed_version'] }}"
+  }
+}

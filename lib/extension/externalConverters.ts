@@ -9,6 +9,7 @@ export default class ExternalConverters extends Extension {
         restartCallback: () => void, addExtension: (extension: Extension) => Promise<void>) {
         super(zigbee, mqtt, state, publishEntityState, eventBus, enableDisableExtension, restartCallback, addExtension);
 
+        //TODO: Homie
         for (const definition of utils.getExternalConvertersDefinitions(settings.get())) {
             const toAdd = {...definition};
             delete toAdd['homeassistant'];

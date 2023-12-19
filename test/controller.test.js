@@ -676,6 +676,7 @@ describe('Controller', () => {
         expect(MQTT.publish).toHaveBeenCalledWith('zigbee2mqtt/fo', 'bar', { retain: false, qos: 0 }, expect.any(Function));
     });
 
+    //TODO: Homie
     it('Should disable legacy options on new network start', async () => {
         settings.set(['homeassistant'], true);
         settings.reRead();

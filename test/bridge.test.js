@@ -75,6 +75,7 @@ describe('Bridge', () => {
         jest.useRealTimers();
     })
 
+    //TODO: Homie
     it('Should publish bridge info on startup', async () => {
         await resetExtension();
         const version = await require('../lib/util/utils').default.getZigbee2MQTTVersion();
@@ -570,7 +571,7 @@ describe('Bridge', () => {
             {retain: false, qos: 0}, expect.any(Function)
         );
     });
-
+    //TODO: Homie
     it('Shouldnt allow rename device with to now allowed name', async () => {
         MQTT.publish.mockClear();
         MQTT.events.message('zigbee2mqtt/bridge/request/device/rename', stringify({from: 'bulb', to: 'living_room/blinds/center'}));
@@ -582,6 +583,7 @@ describe('Bridge', () => {
         );
     });
 
+    //TODO: Homie
     it('Should allow rename group', async () => {
         MQTT.publish.mockClear();
         MQTT.events.message('zigbee2mqtt/bridge/request/group/rename', stringify({from: 'group_1', to: 'group_new_name'}));
@@ -780,6 +782,7 @@ describe('Bridge', () => {
         );
     });
 
+    //TODO: Homie
     it('Should allow to enable/disable Home Assistant extension', async () => {
         // Test if disabled intially
         const device = zigbeeHerdsman.devices.WXKG11LM;

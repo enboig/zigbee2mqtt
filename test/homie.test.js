@@ -24,7 +24,7 @@ describe('Homie extension', () => {
     beforeEach(async () => {
         data.writeDefaultConfiguration();
         settings.reRead();
-        settings.set(['homeassistant'], true);
+        settings.set(['homie'], true);
         data.writeEmptyState();
         controller.state.load();
         await resetExtension();
@@ -34,7 +34,7 @@ describe('Homie extension', () => {
         version = await require('../lib/util/utils').default.getZigbee2MQTTVersion();
         version = `Zigbee2MQTT ${version.version}`;
         jest.useFakeTimers();
-        settings.set(['homeassistant'], true);
+        settings.set(['homie'], true);
         data.writeDefaultConfiguration();
         settings.reRead();
         data.writeEmptyState();
@@ -115,7 +115,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/1221051039810110150109113116116_9/light/config',
+            'homie/light/1221051039810110150109113116116_9/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -139,7 +139,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/switch/1221051039810110150109113116116_9/switch/config',
+            'homie/switch/1221051039810110150109113116116_9/switch/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -166,7 +166,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -193,7 +193,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/humidity/config',
+            'homie/sensor/0x0017880104e45522/humidity/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -220,7 +220,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/pressure/config',
+            'homie/sensor/0x0017880104e45522/pressure/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -248,7 +248,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/battery/config',
+            'homie/sensor/0x0017880104e45522/battery/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -276,7 +276,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/linkquality/config',
+            'homie/sensor/0x0017880104e45522/linkquality/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -304,7 +304,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/switch/0x0017880104e45542/switch_left/config',
+            'homie/switch/0x0017880104e45542/switch_left/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -332,7 +332,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/switch/0x0017880104e45542/switch_right/config',
+            'homie/switch/0x0017880104e45542/switch_right/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -373,7 +373,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/0x000b57fffec6a5b2/light/config',
+            'homie/light/0x000b57fffec6a5b2/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -415,7 +415,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -442,7 +442,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/humidity/config',
+            'homie/sensor/0x0017880104e45522/humidity/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -469,7 +469,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/pressure/config',
+            'homie/sensor/0x0017880104e45522/pressure/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -478,7 +478,7 @@ describe('Homie extension', () => {
 
     it('Should discover devices with overriden user configuration', async () => {
         settings.set(['devices', '0x0017880104e45522'], {
-            homeassistant: {
+            homie: {
                 expire_after: 30,
                 icon: 'mdi:test',
                 temperature: {
@@ -528,7 +528,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -556,7 +556,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/humidity/config',
+            'homie/sensor/0x0017880104e45522/humidity/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -565,7 +565,7 @@ describe('Homie extension', () => {
 
     it('Should discover devices with overriden name', async () => {
         settings.set(['devices', '0x0017880104e45522'], {
-            homeassistant: {
+            homie: {
                 name: "Weather Sensor",
             },
             friendly_name: 'weather_sensor',
@@ -598,7 +598,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -625,7 +625,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/humidity/config',
+            'homie/sensor/0x0017880104e45522/humidity/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -635,7 +635,7 @@ describe('Homie extension', () => {
     it('Should discover devices with overriden user configuration affecting type and object_id', async () => {
         settings.set(['devices', '0x0017880104e45541'], {
             friendly_name: 'my_switch',
-            homeassistant: {
+            homie: {
                 switch: {
                     type: 'light',
                     object_id: 'light'
@@ -674,7 +674,7 @@ describe('Homie extension', () => {
         }
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/0x0017880104e45541/light/config',
+            'homie/light/0x0017880104e45541/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -682,9 +682,9 @@ describe('Homie extension', () => {
 
     });
 
-    it('Shouldnt discover devices when homeassistant null is set in device options', async () => {
+    it('Shouldnt discover devices when homie null is set in device options', async () => {
         settings.set(['devices', '0x0017880104e45522'], {
-            homeassistant: null,
+            homie: null,
             friendly_name: 'weather_sensor',
             retain: false,
         })
@@ -693,14 +693,14 @@ describe('Homie extension', () => {
         await flushPromises();
 
         const topics = MQTT.publish.mock.calls.map((c) => c[0]);
-        expect(topics).not.toContain('homeassistant/sensor/0x0017880104e45522/humidity/config')
-        expect(topics).not.toContain('homeassistant/sensor/0x0017880104e45522/temperature/config')
+        expect(topics).not.toContain('homie/sensor/0x0017880104e45522/humidity/config')
+        expect(topics).not.toContain('homie/sensor/0x0017880104e45522/temperature/config')
     });
 
     it('Shouldnt discover sensor when set to null', async () => {
         logger.error.mockClear();
         settings.set(['devices', '0x0017880104e45522'], {
-            homeassistant: { humidity: null },
+            homie: { humidity: null },
             friendly_name: 'weather_sensor',
             retain: false,
         })
@@ -708,8 +708,8 @@ describe('Homie extension', () => {
         await resetExtension();
 
         const topics = MQTT.publish.mock.calls.map((c) => c[0]);
-        expect(topics).not.toContain('homeassistant/sensor/0x0017880104e45522/humidity/config')
-        expect(topics).toContain('homeassistant/sensor/0x0017880104e45522/temperature/config')
+        expect(topics).not.toContain('homie/sensor/0x0017880104e45522/humidity/config')
+        expect(topics).toContain('homie/sensor/0x0017880104e45522/temperature/config')
     });
 
     it('Should discover devices with fan', async () => {
@@ -747,7 +747,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/fan/0x0017880104e45548/fan/config',
+            'homie/fan/0x0017880104e45548/fan/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -809,7 +809,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/climate/0x0017882104a44559/climate/config',
+            'homie/climate/0x0017882104a44559/climate/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -844,7 +844,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/cover/0x0017880104e45551/cover/config',
+            'homie/cover/0x0017880104e45551/cover/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -877,15 +877,15 @@ describe('Homie extension', () => {
         }
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/cover/0xf4ce368a38be56a1/cover_l6/config',
+            'homie/cover/0xf4ce368a38be56a1/cover_l6/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
         );
     });
 
-    it('Should discover devices with custom homeassistant_discovery_topic', async () => {
-        settings.set(['advanced', 'homeassistant_discovery_topic'], 'my_custom_discovery_topic')
+    it('Should discover devices with custom homie_discovery_topic', async () => {
+        settings.set(['advanced', 'homie_discovery_topic'], 'my_custom_discovery_topic')
         await resetExtension();
 
         let payload;
@@ -920,7 +920,7 @@ describe('Homie extension', () => {
 
     it('Should throw error when starting with attributes output', async () => {
         settings.set(['experimental', 'output'], 'attribute')
-        settings.set(['homeassistant'], true)
+        settings.set(['homie'], true)
         expect(() => {
             const controller = new Controller(false);
         }).toThrowError('Homie integration is not possible with attribute output!');
@@ -1038,7 +1038,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payloadHA),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1060,21 +1060,21 @@ describe('Homie extension', () => {
         controller.eventBus.emitEntityOptionsChanged({ entity: device, from: {}, to: { 'test': 123 } });
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledWith(
-            `homeassistant/light/${device.ID}/light/config`,
+            `homie/light/${device.ID}/light/config`,
             expect.any(String),
             expect.any(Object),
             expect.any(Function),
         );
     });
 
-    it('Should send all status when home assistant comes online (default topic)', async () => {
+    it('Should send all status when homie comes online (default topic)', async () => {
         data.writeDefaultState();
         extension.state.load();
         await resetExtension();
-        expect(MQTT.subscribe).toHaveBeenCalledWith('homeassistant/status');
+        expect(MQTT.subscribe).toHaveBeenCalledWith('homie/status');
         await flushPromises();
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/status', 'online');
+        await MQTT.events.message('homie/status', 'online');
         await flushPromises();
         jest.runOnlyPendingTimers();
         await flushPromises();
@@ -1098,7 +1098,7 @@ describe('Homie extension', () => {
         );
     });
 
-    it('Should send all status when home assistant comes online', async () => {
+    it('Should send all status when homie comes online', async () => {
         data.writeDefaultState();
         extension.state.load();
         await resetExtension();
@@ -1122,7 +1122,7 @@ describe('Homie extension', () => {
         );
     });
 
-    it('Shouldnt send all status when home assistant comes offline', async () => {
+    it('Shouldnt send all status when homie comes offline', async () => {
         data.writeDefaultState();
         extension.state.load();
         await resetExtension();
@@ -1135,7 +1135,7 @@ describe('Homie extension', () => {
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
     });
 
-    it('Shouldnt send all status when home assistant comes online with different topic', async () => {
+    it('Shouldnt send all status when homie comes online with different topic', async () => {
         data.writeDefaultState();
         extension.state.load();
         await resetExtension();
@@ -1175,7 +1175,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1188,31 +1188,31 @@ describe('Homie extension', () => {
         await flushPromises();
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/humidity/config',
+            'homie/sensor/0x0017880104e45522/humidity/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/pressure/config',
+            'homie/sensor/0x0017880104e45522/pressure/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/battery/config',
+            'homie/sensor/0x0017880104e45522/battery/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/linkquality/config',
+            'homie/sensor/0x0017880104e45522/linkquality/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1227,10 +1227,10 @@ describe('Homie extension', () => {
     });
 
     it('Should refresh discovery when device is renamed', async () => {
-        await MQTT.events.message('homeassistant/device_automation/0x0017880104e45522/action_double/config', stringify({ topic: 'zigbee2mqtt/weather_sensor/action' }));
+        await MQTT.events.message('homie/device_automation/0x0017880104e45522/action_double/config', stringify({ topic: 'zigbee2mqtt/weather_sensor/action' }));
         await flushPromises();
         MQTT.publish.mockClear();
-        MQTT.events.message('zigbee2mqtt/bridge/request/device/rename', stringify({ "from": "weather_sensor", "to": "weather_sensor_renamed", "homeassistant_rename": true }));
+        MQTT.events.message('zigbee2mqtt/bridge/request/device/rename', stringify({ "from": "weather_sensor", "to": "weather_sensor_renamed", "homie_rename": true }));
         await flushPromises();
         jest.runOnlyPendingTimers();
         await flushPromises();
@@ -1256,21 +1256,21 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
         );
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45522/action_double/config',
+            'homie/device_automation/0x0017880104e45522/action_double/config',
             stringify({
                 "automation_type": "trigger",
                 "type": "action",
@@ -1294,7 +1294,7 @@ describe('Homie extension', () => {
 
     it('Should refresh discovery when group is renamed', async () => {
         MQTT.publish.mockClear();
-        MQTT.events.message('zigbee2mqtt/bridge/request/group/rename', stringify({ "from": "ha_discovery_group", "to": "ha_discovery_group_new", "homeassistant_rename": true }));
+        MQTT.events.message('zigbee2mqtt/bridge/request/group/rename', stringify({ "from": "ha_discovery_group", "to": "ha_discovery_group_new", "homie_rename": true }));
         await flushPromises();
         jest.runOnlyPendingTimers();
         await flushPromises();
@@ -1337,27 +1337,27 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/1221051039810110150109113116116_9/light/config',
+            'homie/light/1221051039810110150109113116116_9/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
         );
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/1221051039810110150109113116116_9/light/config',
+            'homie/light/1221051039810110150109113116116_9/light/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
         );
     });
 
-    it('Shouldnt refresh discovery when device is renamed and homeassistant_rename is false', async () => {
+    it('Shouldnt refresh discovery when device is renamed and homie_rename is false', async () => {
         MQTT.publish.mockClear();
-        MQTT.events.message('zigbee2mqtt/bridge/request/device/rename', stringify({ "from": "weather_sensor", "to": "weather_sensor_renamed", "homeassistant_rename": false }));
+        MQTT.events.message('zigbee2mqtt/bridge/request/device/rename', stringify({ "from": "weather_sensor", "to": "weather_sensor_renamed", "homie_rename": false }));
         await flushPromises();
 
         expect(MQTT.publish).not.toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             null,
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1384,7 +1384,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1416,7 +1416,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/binary_sensor/0x000b57fffec6a5b2/update_available/config',
+            'homie/binary_sensor/0x000b57fffec6a5b2/update_available/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1426,8 +1426,8 @@ describe('Homie extension', () => {
     it('Should discover trigger when click is published', async () => {
         const discovered = MQTT.publish.mock.calls.filter((c) => c[0].includes('0x0017880104e45520')).map((c) => c[0]);
         expect(discovered.length).toBe(7);
-        expect(discovered).toContain('homeassistant/sensor/0x0017880104e45520/click/config');
-        expect(discovered).toContain('homeassistant/sensor/0x0017880104e45520/action/config');
+        expect(discovered).toContain('homie/sensor/0x0017880104e45520/click/config');
+        expect(discovered).toContain('homie/sensor/0x0017880104e45520/action/config');
 
         MQTT.publish.mockClear();
 
@@ -1454,7 +1454,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/action_single/config',
+            'homie/device_automation/0x0017880104e45520/action_single/config',
             stringify(discoverPayloadAction),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1478,7 +1478,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/click_single/config',
+            'homie/device_automation/0x0017880104e45520/click_single/config',
             stringify(discoverPayloadClick),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1524,14 +1524,14 @@ describe('Homie extension', () => {
         await zigbeeHerdsman.events.message(payload1);
         await flushPromises();
         expect(MQTT.publish).not.toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/action_single/config',
+            'homie/device_automation/0x0017880104e45520/action_single/config',
             stringify(discoverPayloadAction),
             { retain: true, qos: 0 },
             expect.any(Function),
         );
 
         expect(MQTT.publish).not.toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/click_single/config',
+            'homie/device_automation/0x0017880104e45520/click_single/config',
             stringify(discoverPayloadClick),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1553,28 +1553,28 @@ describe('Homie extension', () => {
 
         // Shouldn't rediscover when already discovered in previous session
         controller.extensions.find((e) => e.constructor.name === 'Homie')._clearDiscoveredTrigger();
-        await MQTT.events.message('homeassistant/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button/action' }));
-        await MQTT.events.message('homeassistant/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button/action' }));
+        await MQTT.events.message('homie/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button/action' }));
+        await MQTT.events.message('homie/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button/action' }));
         await flushPromises();
         MQTT.publish.mockClear();
         const payload2 = { data: { '32768': 2 }, cluster: 'genOnOff', device, endpoint: device.getEndpoint(1), type: 'attributeReport', linkquality: 10 };
         await zigbeeHerdsman.events.message(payload2);
         await flushPromises();
-        expect(MQTT.publish).not.toHaveBeenCalledWith('homeassistant/device_automation/0x0017880104e45520/action_double/config', expect.any(String), expect.any(Object), expect.any(Function));
+        expect(MQTT.publish).not.toHaveBeenCalledWith('homie/device_automation/0x0017880104e45520/action_double/config', expect.any(String), expect.any(Object), expect.any(Function));
 
         // Should rediscover when already discovered in previous session but with diferent name
         controller.extensions.find((e) => e.constructor.name === 'Homie')._clearDiscoveredTrigger();
-        await MQTT.events.message('homeassistant/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button_other_name/action' }));
+        await MQTT.events.message('homie/device_automation/0x0017880104e45520/action_double/config', stringify({ topic: 'zigbee2mqtt/button_other_name/action' }));
         await flushPromises();
         MQTT.publish.mockClear();
         await zigbeeHerdsman.events.message(payload2);
         await flushPromises();
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/device_automation/0x0017880104e45520/action_double/config', expect.any(String), expect.any(Object), expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/device_automation/0x0017880104e45520/action_double/config', expect.any(String), expect.any(Object), expect.any(Function));
     });
 
     it('Should not discover device_automation when disabled', async () => {
         settings.set(['device_options'], {
-            homeassistant: { device_automation: null },
+            homie: { device_automation: null },
         })
         await resetExtension();
         MQTT.publish.mockClear();
@@ -1585,7 +1585,7 @@ describe('Homie extension', () => {
         await flushPromises();
 
         expect(MQTT.publish).not.toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/action_single/config',
+            'homie/device_automation/0x0017880104e45520/action_single/config',
             expect.any(String),
             expect.any(Object),
             expect.any(Function),
@@ -1602,19 +1602,19 @@ describe('Homie extension', () => {
 
         const discovered = MQTT.publish.mock.calls.filter((c) => c[0].includes('0x0017880104e45520')).map((c) => c[0]);
         expect(discovered.length).toBe(6);
-        expect(discovered).toContain('homeassistant/sensor/0x0017880104e45520/action/config');
-        expect(discovered).toContain('homeassistant/sensor/0x0017880104e45520/battery/config');
-        expect(discovered).toContain('homeassistant/sensor/0x0017880104e45520/linkquality/config');
+        expect(discovered).toContain('homie/sensor/0x0017880104e45520/action/config');
+        expect(discovered).toContain('homie/sensor/0x0017880104e45520/battery/config');
+        expect(discovered).toContain('homie/sensor/0x0017880104e45520/linkquality/config');
     });
 
     it('Should disable Homie legacy triggers', async () => {
-        settings.set(['advanced', 'homeassistant_legacy_triggers'], false);
+        settings.set(['advanced', 'homie_legacy_triggers'], false);
         await resetExtension();
 
         const discovered = MQTT.publish.mock.calls.filter((c) => c[0].includes('0x0017880104e45520')).map((c) => c[0]);
         expect(discovered.length).toBe(5);
-        expect(discovered).not.toContain('homeassistant/sensor/0x0017880104e45520/click/config');
-        expect(discovered).not.toContain('homeassistant/sensor/0x0017880104e45520/action/config');
+        expect(discovered).not.toContain('homie/sensor/0x0017880104e45520/click/config');
+        expect(discovered).not.toContain('homie/sensor/0x0017880104e45520/action/config');
 
         MQTT.publish.mockClear();
 
@@ -1642,7 +1642,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/device_automation/0x0017880104e45520/action_single/config',
+            'homie/device_automation/0x0017880104e45520/action_single/config',
             stringify(discoverPayload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1699,98 +1699,98 @@ describe('Homie extension', () => {
         expect(MQTT.publish.mock.calls[1][0]).toStrictEqual('zigbee2mqtt/button');
         expect(JSON.parse(MQTT.publish.mock.calls[1][1])).toStrictEqual({ action: '', click: null, battery: null, linkquality: null, voltage: null, power_outage_count: null, device_temperature: null });
         expect(MQTT.publish.mock.calls[1][2]).toStrictEqual({ "qos": 0, "retain": false });
-        expect(MQTT.publish.mock.calls[2][0]).toStrictEqual('homeassistant/device_automation/0x0017880104e45520/action_single/config');
+        expect(MQTT.publish.mock.calls[2][0]).toStrictEqual('homie/device_automation/0x0017880104e45520/action_single/config');
         expect(MQTT.publish.mock.calls[3][0]).toStrictEqual('zigbee2mqtt/button/action');
     });
 
     it('Should clear outdated configs', async () => {
         // Non-existing group -> clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/light/1221051039810110150109113116116_91231/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/light/1221051039810110150109113116116_91231/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(1);
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/light/1221051039810110150109113116116_91231/light/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/light/1221051039810110150109113116116_91231/light/config', null, { qos: 0, retain: true }, expect.any(Function));
 
         // Existing group -> dont clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/light/1221051039810110150109113116116_9/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/light/1221051039810110150109113116116_9/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
         // Existing group with old topic structure (1.20.0) -> clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/light/9/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/light/9/light/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(1);
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/light/9/light/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/light/9/light/config', null, { qos: 0, retain: true }, expect.any(Function));
 
         // Existing group, non existing config ->  clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/light/1221051039810110150109113116116_9/switch/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/light/1221051039810110150109113116116_9/switch/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(1);
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/light/1221051039810110150109113116116_9/switch/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/light/1221051039810110150109113116116_9/switch/config', null, { qos: 0, retain: true }, expect.any(Function));
 
         // Non-existing device -> clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/sensor/0x123/temperature/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/sensor/0x123/temperature/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(1);
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/sensor/0x123/temperature/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/sensor/0x123/temperature/config', null, { qos: 0, retain: true }, expect.any(Function));
 
         // Existing device -> don't clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/binary_sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/binary_sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
         // Non-existing device of different instance -> don't clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/sensor/0x123/temperature/config', stringify({ availability: [{ topic: 'zigbee2mqtt_different/bridge/state' }] }));
+        await MQTT.events.message('homie/sensor/0x123/temperature/config', stringify({ availability: [{ topic: 'zigbee2mqtt_different/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
         // Existing device but non-existing config -> don't clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(1);
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/sensor/0x000b57fffec6a5b2/update_available/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/sensor/0x000b57fffec6a5b2/update_available/config', null, { qos: 0, retain: true }, expect.any(Function));
 
         // Non-existing device but invalid payload -> clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/sensor/0x123/temperature/config', '1}3');
+        await MQTT.events.message('homie/sensor/0x123/temperature/config', '1}3');
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
         // Existing device, device automation -> don't clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt/0x000b57fffec6a5b2/availability' }));
+        await MQTT.events.message('homie/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt/0x000b57fffec6a5b2/availability' }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
         // Device automation of different instance -> don't clear
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/device_automation/0x000b57fffec6a5b2_not_existing/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt_different/0x000b57fffec6a5b2_not_existing/availability' }));
+        await MQTT.events.message('homie/device_automation/0x000b57fffec6a5b2_not_existing/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt_different/0x000b57fffec6a5b2_not_existing/availability' }));
         await flushPromises();
         expect(MQTT.publish).toHaveBeenCalledTimes(0);
 
-        // Device was flagged to be excluded from homeassistant discovery
-        settings.set(['devices', '0x000b57fffec6a5b2', 'homeassistant'], null);
+        // Device was flagged to be excluded from homie discovery
+        settings.set(['devices', '0x000b57fffec6a5b2', 'homie'], null);
         await resetExtension();
         MQTT.publish.mockClear();
 
-        await MQTT.events.message('homeassistant/sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
+        await MQTT.events.message('homie/sensor/0x000b57fffec6a5b2/update_available/config', stringify({ availability: [{ topic: 'zigbee2mqtt/bridge/state' }] }));
         await flushPromises();
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/sensor/0x000b57fffec6a5b2/update_available/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/sensor/0x000b57fffec6a5b2/update_available/config', null, { qos: 0, retain: true }, expect.any(Function));
         MQTT.publish.mockClear();
-        await MQTT.events.message('homeassistant/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt/0x000b57fffec6a5b2/availability' }));
+        await MQTT.events.message('homie/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', stringify({ topic: 'zigbee2mqtt/0x000b57fffec6a5b2/availability' }));
         await flushPromises();
-        expect(MQTT.publish).toHaveBeenCalledWith('homeassistant/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', null, { qos: 0, retain: true }, expect.any(Function));
+        expect(MQTT.publish).toHaveBeenCalledWith('homie/device_automation/0x000b57fffec6a5b2/action_button_3_single/config', null, { qos: 0, retain: true }, expect.any(Function));
     });
 
     it('Should not have Homie legacy entity attributes when disabled', async () => {
-        settings.set(['advanced', 'homeassistant_legacy_entity_attributes'], false);
+        settings.set(['advanced', 'homie_legacy_entity_attributes'], false);
         await resetExtension();
 
         let payload;
@@ -1816,7 +1816,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1866,7 +1866,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/1221051039810110150109113116116_9/light/config',
+            'homie/light/1221051039810110150109113116116_9/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1915,7 +1915,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/1221051039810110150109113116116_9/light/config',
+            'homie/light/1221051039810110150109113116116_9/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -1969,7 +1969,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/light/0x000b57fffec6a5b2/light/config',
+            'homie/light/0x000b57fffec6a5b2/light/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -2007,7 +2007,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x000b57fffec6a5b2/last_seen/config',
+            'homie/sensor/0x000b57fffec6a5b2/last_seen/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),
@@ -2044,7 +2044,7 @@ describe('Homie extension', () => {
         };
 
         expect(MQTT.publish).toHaveBeenCalledWith(
-            'homeassistant/sensor/0x0017880104e45522/temperature/config',
+            'homie/sensor/0x0017880104e45522/temperature/config',
             stringify(payload),
             { retain: true, qos: 0 },
             expect.any(Function),

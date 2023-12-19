@@ -130,6 +130,7 @@ declare global {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        //TODO: Homie
         type ExternalDefinition = Definition & {homeassistant: any};
     }
 
@@ -170,6 +171,24 @@ declare global {
     // eslint-disable camelcase
     interface Settings {
         homeassistant?: {
+            discovery_topic: string,
+            status_topic: string,
+            legacy_entity_attributes: boolean,
+            legacy_triggers: boolean,
+        },
+
+        //TODO: Homie extra parameters like 
+        // homie:
+        //   # Set to true to enable the homie integration
+        //   enabled: false
+        //   # the base topic of the homie tree, use homie for auto-discovery
+        //   base_topic: homie
+        //   # homie settings of this device
+        //   device: zigbee2mqtt
+        //   name: zigbee2mqtt
+        //   mac: CA:DE:AD:BE:EF:FF
+        //   ip: 127.0.0.1
+        homie?: {
             discovery_topic: string,
             status_topic: string,
             legacy_entity_attributes: boolean,
@@ -291,6 +310,7 @@ declare global {
         filtered_optimistic?: string[],
         icon?: string,
         homeassistant?: KeyValue,
+        homie?: KeyValue,
         legacy?: boolean,
         friendly_name: string,
         description?: string,
@@ -307,6 +327,7 @@ declare global {
         filtered_optimistic?: string[],
         retrieve_state?: boolean,
         homeassistant?: KeyValue,
+        homie?: KeyValue,
         friendly_name: string,
         description?: string,
         qos?: 0 | 1 | 2,

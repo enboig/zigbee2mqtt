@@ -16,6 +16,7 @@ import ExtensionReceive from './extension/receive';
 import ExtensionNetworkMap from './extension/networkMap';
 import ExtensionSoftReset from './extension/legacy/softReset';
 import ExtensionHomeAssistant from './extension/homeassistant';
+import ExtensionHomie from './extension/homie';
 import ExtensionConfigure from './extension/configure';
 import ExtensionDeviceGroupMembership from './extension/legacy/deviceGroupMembership';
 import ExtensionBridgeLegacy from './extension/legacy/bridgeLegacy';
@@ -30,7 +31,7 @@ import ExtensionExternalConverters from './extension/externalConverters';
 import ExtensionExternalExtension from './extension/externalExtension';
 
 const AllExtensions = [
-    ExtensionPublish, ExtensionReceive, ExtensionNetworkMap, ExtensionSoftReset, ExtensionHomeAssistant,
+    ExtensionPublish, ExtensionReceive, ExtensionNetworkMap, ExtensionSoftReset, ExtensionHomeAssistant, ExtensionHomie,
     ExtensionConfigure, ExtensionDeviceGroupMembership, ExtensionBridgeLegacy, ExtensionBridge, ExtensionGroups,
     ExtensionBind, ExtensionReport, ExtensionOnEvent, ExtensionOTAUpdate,
     ExtensionExternalConverters, ExtensionFrontend, ExtensionExternalExtension, ExtensionAvailability,
@@ -83,6 +84,7 @@ export class Controller {
             settings.get().advanced.legacy_api && new ExtensionBridgeLegacy(...this.extensionArgs),
             settings.get().external_converters.length && new ExtensionExternalConverters(...this.extensionArgs),
             settings.get().homeassistant && new ExtensionHomeAssistant(...this.extensionArgs),
+            settings.get().homie && new ExtensionHomie(...this.extensionArgs),
             /* istanbul ignore next */
             settings.get().advanced.soft_reset_timeout !== 0 && new ExtensionSoftReset(...this.extensionArgs),
         ].filter((n) => n);
@@ -111,6 +113,7 @@ export class Controller {
         // Disable some legacy options on new network creation
         if (startResult === 'reset') {
             settings.set(['advanced', 'homeassistant_legacy_entity_attributes'], false);
+            settings.set(['advanced', 'homie'], false);
             settings.set(['advanced', 'legacy_api'], false);
             settings.set(['advanced', 'legacy_availability_payload'], false);
             settings.set(['device_options', 'legacy'], false);

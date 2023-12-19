@@ -10,6 +10,7 @@ const stateFile = path.join(mockDir, 'state.json');
 function writeDefaultConfiguration() {
     const config = {
         homeassistant: false,
+        homie: false,
         permit_join: true,
         mqtt: {
             base_topic: "zigbee2mqtt",

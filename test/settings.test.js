@@ -15,6 +15,7 @@ const objectAssignDeep = require(`object-assign-deep`);
 const minimalConfig = {
     permit_join: true,
     homeassistant: true,
+    homie: true,
     mqtt: {base_topic: 'zigbee2mqtt', server: 'localhost'},
 };
 
@@ -980,6 +981,16 @@ describe('Settings', () => {
 
         settings.reRead();
         expect(settings.get().homeassistant).toStrictEqual({discovery_topic: 'new', legacy_entity_attributes: true, legacy_triggers: true, status_topic: 'olds'})
+    });
+
+    it('Deprecated: Homie config', () => {
+        write(configurationFile, {...minimalConfig,
+            homie: {discovery_topic: 'new'},
+            advanced: {homie_discovery_topic: 'old', homie_status_topic: 'olds'},
+        });
+
+        settings.reRead();
+        expect(settings.get().homie).toStrictEqual({discovery_topic: 'new', legacy_entity_attributes: true, legacy_triggers: true, status_topic: 'olds'})
     });
 
     it('Deprecated: ban/whitelist config', () => {

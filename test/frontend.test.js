@@ -93,6 +93,7 @@ describe('Frontend', () => {
         jest.useFakeTimers();
     });
 
+    //TODO: Homie
     beforeEach(async () => {
         mockWS.implementation.clients = [];
         data.writeDefaultConfiguration();

@@ -116,6 +116,25 @@ export default class Publish extends Extension {
         }
     }
 
+    //TODO: Homie check 
+    updateMessageHomie(message: KeyValue, entityState: KeyValue): void {
+        /**
+         * Homie always publishes 'state', even when e.g. only setting
+         * the color temperature. This would lead to 2 zigbee publishes, where the first one
+         * (state) is probably unecessary.
+         */
+        if (settings.get().homie) {
+            const hasColorTemp = message.hasOwnProperty('color_temp');
+            const hasColor = message.hasOwnProperty('color');
+            const hasBrightness = message.hasOwnProperty('brightness');
+            const isOn = entityState.state === 'ON' ? true : false;
+            if (isOn && (hasColorTemp || hasColor) && !hasBrightness) {
+                delete message.state;
+                logger.debug('Skipping state because of Homie');
+            }
+        }
+    }
+
     @bind async onMQTTMessage(data: eventdata.MQTTMessage): Promise<void> {
         const parsedTopic = this.parseTopic(data.topic);
         if (!parsedTopic) return;
@@ -155,6 +174,7 @@ export default class Publish extends Extension {
         }
 
         // Convert the MQTT message to a Zigbee message.
+        //TODO: Homie
         const message = this.parseMessage(parsedTopic, data);
         if (message == null) {
             logger.error(`Invalid message '${message}', skipping...`);

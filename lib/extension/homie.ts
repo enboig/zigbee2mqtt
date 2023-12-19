@@ -24,7 +24,7 @@ const sensorClick: DiscoveryEntry = {
 const ACCESS_STATE = 0b001;
 const ACCESS_SET = 0b010;
 const groupSupportedTypes = ['light', 'switch', 'lock', 'cover'];
-const defaultStatusTopic = 'homeassistant/status';
+const defaultStatusTopic = 'homie/status';
 
 const legacyMapping = [
     {
@@ -59,15 +59,15 @@ const featurePropertyWithoutEndpoint = (feature: zhc.DefinitionExposeFeature): s
 };
 
 /**
- * This extensions handles integration with HomeAssistant
+ * This extensions handles integration with Homie
  */
-export default class HomeAssistant extends Extension {
+export default class Homie extends Extension {
     private discovered: {[s: string]:
         {topics: Set<string>, mockProperties: Set<MockProperty>, objectIDs: Set<string>}} = {};
     private discoveredTriggers : {[s: string]: Set<string>}= {};
-    private discoveryTopic = settings.get().homeassistant.discovery_topic;
-    private statusTopic = settings.get().homeassistant.status_topic;
-    private entityAttributes = settings.get().homeassistant.legacy_entity_attributes;
+    private discoveryTopic = settings.get().homie.discovery_topic;
+    private statusTopic = settings.get().homie.status_topic;
+    private entityAttributes = settings.get().homie.legacy_entity_attributes;
     private zigbee2MQTTVersion: string;
 
     constructor(zigbee: Zigbee, mqtt: MQTT, state: State, publishEntityState: PublishEntityState,
@@ -75,13 +75,13 @@ export default class HomeAssistant extends Extension {
         restartCallback: () => void, addExtension: (extension: Extension) => Promise<void>) {
         super(zigbee, mqtt, state, publishEntityState, eventBus, enableDisableExtension, restartCallback, addExtension);
         if (settings.get().advanced.output === 'attribute') {
-            throw new Error('Home Assistant integration is not possible with attribute output!');
+            throw new Error('Homie integration is not possible with attribute output!');
         }
     }
 
     override async start(): Promise<void> {
         if (!settings.get().advanced.cache_state) {
-            logger.warn('In order for Home Assistant integration to work properly set `cache_state: true');
+            logger.warn('In order for Homie integration to work properly set `cache_state: true');
         }
 
         this.zigbee2MQTTVersion = (await utils.getZigbee2MQTTVersion(false)).version;
@@ -97,14 +97,17 @@ export default class HomeAssistant extends Extension {
         this.eventBus.onDeviceMessage(this, this.onZigbeeEvent);
         this.eventBus.onEntityOptionsChanged(this, (data) => this.discover(data.entity, true));
 
+        console.log('this.statusTopic', this.statusTopic)
         this.mqtt.subscribe(this.statusTopic);
         this.mqtt.subscribe(defaultStatusTopic);
         this.mqtt.subscribe(`${this.discoveryTopic}/#`);
 
         // MQTT discovery of all paired devices on startup.
+        console.log('Pre-discoveries')
         for (const entity of [...this.zigbee.devices(false), ...this.zigbee.groups()]) {
             this.discover(entity, true);
         }
+        console.log('Post-discoveries')
 
         // Send availability messages, this is required if the legacy_availability_payload option has been changed.
         this.eventBus.emitPublishAvailability();
@@ -481,7 +484,7 @@ export default class HomeAssistant extends Extension {
 
             const speed = firstExpose.features.find((e) => e.name === 'mode');
             if (speed) {
-                // A fan entity in Home Assistant 2021.3 and above may have a speed,
+                // A fan entity in Homie 2021.3 and above may have a speed,
                 // controlled by a percentage from 1 to 100, and/or non-speed presets.
                 // The MQTT Fan integration allows the speed percentage to be mapped
                 // to a narrower range of speeds (e.g. 1-3), and for these speeds to be
@@ -489,7 +492,7 @@ export default class HomeAssistant extends Extension {
                 //
                 // For the fixed fan modes in ZCL hvacFanCtrl, we model speeds "low",
                 // "medium", and "high" as three speeds covering the full percentage
-                // range as done in Home Assistant's zigpy fan integration, plus
+                // range as done in Homie's zigpy fan integration, plus
                 // presets "on", "auto" and "smart" to cover the remaining modes in
                 // ZCL. This supports a generic ZCL HVAC Fan Control fan. "Off" is
                 // always a valid speed.
@@ -905,7 +908,7 @@ export default class HomeAssistant extends Extension {
     }
 
     @bind onDeviceRemoved(data: eventdata.DeviceRemoved): void {
-        logger.debug(`Clearing Home Assistant discovery topic for '${data.name}'`);
+        logger.debug(`Clearing Homie discovery topic for '${data.name}'`);
         this.discovered[data.ieeeAddr]?.topics.forEach((topic) => {
             this.mqtt.publish(topic, null, {retain: true, qos: 0}, this.discoveryTopic, false, false);
         });
@@ -921,7 +924,7 @@ export default class HomeAssistant extends Extension {
         /**
          * In case we deal with a lightEndpoint configuration Zigbee2MQTT publishes
          * e.g. {state_l1: ON, brightness_l1: 250} to zigbee2mqtt/mydevice.
-         * As the Home Assistant MQTT JSON light cannot be configured to use state_l1/brightness_l1
+         * As the Homie MQTT JSON light cannot be configured to use state_l1/brightness_l1
          * as the state variables, the state topic is set to zigbee2mqtt/mydevice/l1.
          * Here we retrieve all the attributes with the _l1 values and republish them on
          * zigbee2mqtt/mydevice/l1.
@@ -953,11 +956,11 @@ export default class HomeAssistant extends Extension {
         }
 
         /**
-         * Publish an empty value for click and action payload, in this way Home Assistant
-         * can use Home Assistant entities in automations.
+         * Publish an empty value for click and action payload, in this way Homie
+         * can use Homie entities in automations.
          * https://github.com/Koenkk/zigbee2mqtt/issues/959#issuecomment-480341347
          */
-        if (settings.get().homeassistant.legacy_triggers) {
+        if (settings.get().homie.legacy_triggers) {
             const keys = ['action', 'click'].filter((k) => data.message[k]);
             for (const key of keys) {
                 this.publishEntityState(data.entity, {[key]: ''});
@@ -981,9 +984,9 @@ export default class HomeAssistant extends Extension {
     }
 
     @bind async onEntityRenamed(data: eventdata.EntityRenamed): Promise<void> {
-        logger.debug(`Refreshing Home Assistant discovery topic for '${data.entity.name}'`);
+        logger.debug(`Refreshing Homie discovery topic for '${data.entity.name}'`);
 
-        // Clear before rename so Home Assistant uses new friendly_name
+        // Clear before rename so Homie uses new friendly_name
         // https://github.com/Koenkk/zigbee2mqtt/issues/4096#issuecomment-674044916
         if (data.homeAssisantRename) {
             for (const config of this.getConfigs(data.entity)) {
@@ -991,7 +994,7 @@ export default class HomeAssistant extends Extension {
                 this.mqtt.publish(topic, null, {retain: true, qos: 0}, this.discoveryTopic, false, false);
             }
 
-            // Make sure Home Assistant deletes the old entity first otherwise another one (_2) is created
+            // Make sure Homie deletes the old entity first otherwise another one (_2) is created
             // https://github.com/Koenkk/zigbee2mqtt/issues/12610
             await utils.sleep(2);
         }
@@ -1027,9 +1030,9 @@ export default class HomeAssistant extends Extension {
 
             // Deprecated in favour of exposes
             /* istanbul ignore if */
-            if (entity.definition.hasOwnProperty('homeassistant')) {
+            if (entity.definition.hasOwnProperty('homie')) {
                 // @ts-ignore
-                configs.push(entity.definition.homeassistant);
+                configs.push(entity.definition.homie);
             }
         } else { // group
             const exposesByType: {[s: string]: zhc.DefinitionExpose[]} = {};
@@ -1128,15 +1131,15 @@ export default class HomeAssistant extends Extension {
             configs = configs.filter((c) => c !== sensorClick);
         }
 
-        if (!settings.get().homeassistant.legacy_triggers) {
+        if (!settings.get().homie.legacy_triggers) {
             configs = configs.filter((c) => c.object_id !== 'action' && c.object_id !== 'click');
         }
 
         // deep clone of the config objects
         configs = JSON.parse(JSON.stringify(configs));
 
-        if (entity.options.homeassistant) {
-            const s = entity.options.homeassistant;
+        if (entity.options.homie) {
+            const s = entity.options.homie;
             configs = configs.filter((config) => !s.hasOwnProperty(config.object_id) || s[config.object_id] != null);
             configs.forEach((config) => {
                 const configOverride = s[config.object_id];
@@ -1162,207 +1165,208 @@ export default class HomeAssistant extends Extension {
         if (entity.isGroup()) {
             if (!discover || entity.zh.members.length === 0) return;
         } else if (!discover || !entity.definition || entity.zh.interviewing ||
-            (entity.options.hasOwnProperty('homeassistant') && !entity.options.homeassistant)) {
+            (entity.options.hasOwnProperty('homie') && !entity.options.homie)) {
             return;
         }
 
-        this.discovered[discoverKey] = {topics: new Set(), mockProperties: new Set(), objectIDs: new Set()};
-        this.getConfigs(entity).forEach((config) => {
-            const payload = {...config.discovery_payload};
-            const baseTopic = `${settings.get().mqtt.base_topic}/${entity.name}`;
-            let stateTopic = baseTopic;
-            if (payload.state_topic_postfix) {
-                stateTopic += `/${payload.state_topic_postfix}`;
-                delete payload.state_topic_postfix;
-            }
+        // this.discovered[discoverKey] = {topics: new Set(), mockProperties: new Set(), objectIDs: new Set()};
+        // this.getConfigs(entity).forEach((config) => {
+        //     const payload = {...config.discovery_payload};
+        //     const baseTopic = `homie/${entity.name}`;
+        //     let stateTopic = baseTopic;
+        //     if (payload.state_topic_postfix) {
+        //         stateTopic += `/${payload.state_topic_postfix}`;
+        //         delete payload.state_topic_postfix;
+        //     }
 
-            if (!payload.hasOwnProperty('state_topic') || payload.state_topic) {
-                payload.state_topic = stateTopic;
-            } else {
-                /* istanbul ignore else */
-                if (payload.hasOwnProperty('state_topic')) {
-                    delete payload.state_topic;
-                }
-            }
+        //     if (!payload.hasOwnProperty('state_topic') || payload.state_topic) {
+        //         payload.state_topic = stateTopic;
+        //     } else {
+        //         /* istanbul ignore else */
+        //         if (payload.hasOwnProperty('state_topic')) {
+        //             delete payload.state_topic;
+        //         }
+        //     }
 
-            if (payload.position_topic) {
-                payload.position_topic = stateTopic;
-            }
+        //     if (payload.position_topic) {
+        //         payload.position_topic = stateTopic;
+        //     }
 
-            if (payload.tilt_status_topic) {
-                payload.tilt_status_topic = stateTopic;
-            }
+        //     if (payload.tilt_status_topic) {
+        //         payload.tilt_status_topic = stateTopic;
+        //     }
 
-            if (this.entityAttributes) {
-                payload.json_attributes_topic = stateTopic;
-            }
+        //     if (this.entityAttributes) {
+        //         payload.json_attributes_topic = stateTopic;
+        //     }
 
-            const devicePayload = this.getDevicePayload(entity);
+        //     const devicePayload = this.getDevicePayload(entity);
 
-            // Set (unique) name, separate by space if device name contains space.
-            const nameSeparator = devicePayload.name.includes('_') ? '_' : ' ';
-            payload.name = devicePayload.name;
-            if (config.object_id.startsWith(config.type) && config.object_id.includes('_')) {
-                payload.name += `${nameSeparator}${config.object_id.split(/_(.+)/)[1]}`;
-            } else if (!config.object_id.startsWith(config.type)) {
-                payload.name += `${nameSeparator}${config.object_id.replace(/_/g, nameSeparator)}`;
-            }
+        //     // Set (unique) name, separate by space if device name contains space.
+        //     const nameSeparator = devicePayload.name.includes('_') ? '_' : ' ';
+        //     payload.name = devicePayload.name;
+        //     if (config.object_id.startsWith(config.type) && config.object_id.includes('_')) {
+        //         payload.name += `${nameSeparator}${config.object_id.split(/_(.+)/)[1]}`;
+        //     } else if (!config.object_id.startsWith(config.type)) {
+        //         payload.name += `${nameSeparator}${config.object_id.replace(/_/g, nameSeparator)}`;
+        //     }
 
-            // Set unique_id
-            payload.unique_id = `${entity.options.ID}_${config.object_id}_${settings.get().mqtt.base_topic}`;
+        //     // Set unique_id
+        //     payload.unique_id = `${entity.options.ID}_${config.object_id}_${settings.get().mqtt.base_topic}`;
 
-            // Attributes for device registry
-            payload.device = devicePayload;
+        //     // Attributes for device registry
+        //     payload.device = devicePayload;
 
-            // Availability payload
-            payload.availability = [{topic: `${settings.get().mqtt.base_topic}/bridge/state`}];
+        //     // Availability payload
+        //     payload.availability = [{topic: `${settings.get().mqtt.base_topic}/bridge/state`}];
 
-            /* istanbul ignore next */
-            if (utils.isAvailabilityEnabledForEntity(entity, settings.get())) {
-                payload.availability_mode = 'all';
-                payload.availability.push({topic: `${baseTopic}/availability`});
-            }
+        //     /* istanbul ignore next */
+        //     if (utils.isAvailabilityEnabledForEntity(entity, settings.get())) {
+        //         payload.availability_mode = 'all';
+        //         payload.availability.push({topic: `${baseTopic}/availability`});
+        //     }
 
-            if (entity.isDevice() && entity.options.disabled) {
-                // Mark disabled device always as unavailable
-                payload.availability.forEach((a: KeyValue) => a.value_template = '{{ "offline" }}');
-            } else if (!settings.get().advanced.legacy_availability_payload) {
-                payload.availability.forEach((a: KeyValue) => a.value_template = '{{ value_json.state }}');
-            }
+        //     if (entity.isDevice() && entity.options.disabled) {
+        //         // Mark disabled device always as unavailable
+        //         payload.availability.forEach((a: KeyValue) => a.value_template = '{{ "offline" }}');
+        //     } else if (!settings.get().advanced.legacy_availability_payload) {
+        //         payload.availability.forEach((a: KeyValue) => a.value_template = '{{ value_json.state }}');
+        //     }
 
-            const commandTopicPrefix = payload.command_topic_prefix ? `${payload.command_topic_prefix}/` : '';
-            delete payload.command_topic_prefix;
-            const commandTopicPostfix = payload.command_topic_postfix ? `/${payload.command_topic_postfix}` : '';
-            delete payload.command_topic_postfix;
-            const commandTopic = `${baseTopic}/${commandTopicPrefix}set${commandTopicPostfix}`;
+        //     const commandTopicPrefix = payload.command_topic_prefix ? `${payload.command_topic_prefix}/` : '';
+        //     delete payload.command_topic_prefix;
+        //     const commandTopicPostfix = payload.command_topic_postfix ? `/${payload.command_topic_postfix}` : '';
+        //     delete payload.command_topic_postfix;
+        //     const commandTopic = `${baseTopic}/${commandTopicPrefix}set${commandTopicPostfix}`;
 
-            if (payload.command_topic && typeof payload.command_topic !== 'string') {
-                payload.command_topic = commandTopic;
-            }
+        //     if (payload.command_topic && typeof payload.command_topic !== 'string') {
+        //         payload.command_topic = commandTopic;
+        //     }
 
-            if (payload.set_position_topic) {
-                payload.set_position_topic = commandTopic;
-            }
+        //     if (payload.set_position_topic) {
+        //         payload.set_position_topic = commandTopic;
+        //     }
 
-            if (payload.tilt_command_topic) {
-                payload.tilt_command_topic = `${baseTopic}/${commandTopicPrefix}set/tilt`;
-            }
+        //     if (payload.tilt_command_topic) {
+        //         payload.tilt_command_topic = `${baseTopic}/${commandTopicPrefix}set/tilt`;
+        //     }
 
-            if (payload.mode_state_topic) {
-                payload.mode_state_topic = stateTopic;
-            }
+        //     if (payload.mode_state_topic) {
+        //         payload.mode_state_topic = stateTopic;
+        //     }
 
-            if (payload.mode_command_topic) {
-                payload.mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/system_mode`;
-            }
+        //     if (payload.mode_command_topic) {
+        //         payload.mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/system_mode`;
+        //     }
 
-            if (payload.current_temperature_topic) {
-                payload.current_temperature_topic = stateTopic;
-            }
+        //     if (payload.current_temperature_topic) {
+        //         payload.current_temperature_topic = stateTopic;
+        //     }
 
-            if (payload.temperature_state_topic) {
-                payload.temperature_state_topic = stateTopic;
-            }
+        //     if (payload.temperature_state_topic) {
+        //         payload.temperature_state_topic = stateTopic;
+        //     }
 
-            if (payload.temperature_low_state_topic) {
-                payload.temperature_low_state_topic = stateTopic;
-            }
+        //     if (payload.temperature_low_state_topic) {
+        //         payload.temperature_low_state_topic = stateTopic;
+        //     }
 
-            if (payload.temperature_high_state_topic) {
-                payload.temperature_high_state_topic = stateTopic;
-            }
+        //     if (payload.temperature_high_state_topic) {
+        //         payload.temperature_high_state_topic = stateTopic;
+        //     }
 
-            if (payload.temperature_command_topic) {
-                payload.temperature_command_topic =
-                    `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_command_topic}`;
-            }
+        //     if (payload.temperature_command_topic) {
+        //         payload.temperature_command_topic =
+        //             `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_command_topic}`;
+        //     }
 
-            if (payload.temperature_low_command_topic) {
-                payload.temperature_low_command_topic =
-                    `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_low_command_topic}`;
-            }
+        //     if (payload.temperature_low_command_topic) {
+        //         payload.temperature_low_command_topic =
+        //             `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_low_command_topic}`;
+        //     }
 
-            if (payload.temperature_high_command_topic) {
-                payload.temperature_high_command_topic =
-                    `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_high_command_topic}`;
-            }
+        //     if (payload.temperature_high_command_topic) {
+        //         payload.temperature_high_command_topic =
+        //             `${baseTopic}/${commandTopicPrefix}set/${payload.temperature_high_command_topic}`;
+        //     }
 
-            if (payload.fan_mode_state_topic) {
-                payload.fan_mode_state_topic = stateTopic;
-            }
+        //     if (payload.fan_mode_state_topic) {
+        //         payload.fan_mode_state_topic = stateTopic;
+        //     }
 
-            if (payload.latest_version_topic) {
-                payload.latest_version_topic = stateTopic;
-            }
+        //     if (payload.latest_version_topic) {
+        //         payload.latest_version_topic = stateTopic;
+        //     }
 
-            if (payload.fan_mode_command_topic) {
-                payload.fan_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/fan_mode`;
-            }
+        //     if (payload.fan_mode_command_topic) {
+        //         payload.fan_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/fan_mode`;
+        //     }
 
-            if (payload.swing_mode_state_topic) {
-                payload.swing_mode_state_topic = stateTopic;
-            }
+        //     if (payload.swing_mode_state_topic) {
+        //         payload.swing_mode_state_topic = stateTopic;
+        //     }
 
-            if (payload.swing_mode_command_topic) {
-                payload.swing_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/swing_mode`;
-            }
+        //     if (payload.swing_mode_command_topic) {
+        //         payload.swing_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/swing_mode`;
+        //     }
 
-            if (payload.percentage_state_topic) {
-                payload.percentage_state_topic = stateTopic;
-            }
+        //     if (payload.percentage_state_topic) {
+        //         payload.percentage_state_topic = stateTopic;
+        //     }
 
-            if (payload.percentage_command_topic) {
-                payload.percentage_command_topic = `${baseTopic}/${commandTopicPrefix}set/fan_mode`;
-            }
+        //     if (payload.percentage_command_topic) {
+        //         payload.percentage_command_topic = `${baseTopic}/${commandTopicPrefix}set/fan_mode`;
+        //     }
 
-            if (payload.preset_mode_state_topic) {
-                payload.preset_mode_state_topic = stateTopic;
-            }
+        //     if (payload.preset_mode_state_topic) {
+        //         payload.preset_mode_state_topic = stateTopic;
+        //     }
 
-            if (payload.preset_mode_command_topic) {
-                payload.preset_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/` +
-                    payload.preset_mode_command_topic;
-            }
+        //     if (payload.preset_mode_command_topic) {
+        //         payload.preset_mode_command_topic = `${baseTopic}/${commandTopicPrefix}set/` +
+        //             payload.preset_mode_command_topic;
+        //     }
 
-            if (payload.action_topic) {
-                payload.action_topic = stateTopic;
-            }
+        //     if (payload.action_topic) {
+        //         payload.action_topic = stateTopic;
+        //     }
 
-            // Override configuration with user settings.
-            if (entity.options.hasOwnProperty('homeassistant')) {
-                const add = (obj: KeyValue, ignoreName: boolean): void => {
-                    Object.keys(obj).forEach((key) => {
-                        if (['type', 'object_id'].includes(key)) {
-                            return;
-                        } else if (ignoreName && key === 'name') {
-                            return;
-                        } else if (['number', 'string', 'boolean'].includes(typeof obj[key]) ||
-                            Array.isArray(obj[key])) {
-                            payload[key] = obj[key];
-                        } else if (obj[key] === null) {
-                            delete payload[key];
-                        } else if (key === 'device' && typeof obj[key] === 'object') {
-                            Object.keys(obj['device']).forEach((key) => {
-                                payload['device'][key] = obj['device'][key];
-                            });
-                        }
-                    });
-                };
+        //     // Override configuration with user settings.
+        //     if (entity.options.hasOwnProperty('homie')) {
+        //         const add = (obj: KeyValue, ignoreName: boolean): void => {
+        //             Object.keys(obj).forEach((key) => {
+        //                 if (['type', 'object_id'].includes(key)) {
+        //                     return;
+        //                 } else if (ignoreName && key === 'name') {
+        //                     return;
+        //                 } else if (['number', 'string', 'boolean'].includes(typeof obj[key]) ||
+        //                     Array.isArray(obj[key])) {
+        //                     payload[key] = obj[key];
+        //                 } else if (obj[key] === null) {
+        //                     delete payload[key];
+        //                 } else if (key === 'device' && typeof obj[key] === 'object') {
+        //                     Object.keys(obj['device']).forEach((key) => {
+        //                         payload['device'][key] = obj['device'][key];
+        //                     });
+        //                 }
+        //             });
+        //         };
 
-                add(entity.options.homeassistant, true);
+        //         add(entity.options.homie, true);
 
-                if (entity.options.homeassistant.hasOwnProperty(config.object_id)) {
-                    add(entity.options.homeassistant[config.object_id], false);
-                }
-            }
+        //         if (entity.options.homie.hasOwnProperty(config.object_id)) {
+        //             add(entity.options.homie[config.object_id], false);
+        //         }
+        //     }
 
-            const topic = this.getDiscoveryTopic(config, entity);
-            this.mqtt.publish(topic, stringify(payload), {retain: true, qos: 0}, this.discoveryTopic, false, false);
-            this.discovered[discoverKey].topics.add(topic);
-            this.discovered[discoverKey].objectIDs.add(config.object_id);
-            config.mockProperties?.forEach((mockProperty) =>
-                this.discovered[discoverKey].mockProperties.add(mockProperty));
-        });
+        //     const topic = this.getDiscoveryTopic(config, entity);
+        //     this.mqtt.publish(topic, stringify(payload), {retain: true, qos: 0}, this.discoveryTopic, false, false);
+        //     this.discovered[discoverKey].topics.add(topic);
+        //     this.discovered[discoverKey].objectIDs.add(config.object_id);
+        //     config.mockProperties?.forEach((mockProperty) =>
+        //         this.discovered[discoverKey].mockProperties.add(mockProperty));
+        //     console.log('config.mockProperties',config.mockProperties)
+        // });
     }
 
     @bind private onMQTTMessage(data: eventdata.MQTTMessage): void {
@@ -1411,13 +1415,14 @@ export default class HomeAssistant extends Extension {
                     .find((c) => c.type === type && c.object_id === objectID &&
                     `${this.discoveryTopic}/${this.getDiscoveryTopic(c, entity)}` === data.topic);
             }
-            // Device was flagged to be excluded from homeassistant discovery
-            clear = clear || (entity.options.hasOwnProperty('homeassistant') && !entity.options.homeassistant);
+            // Device was flagged to be excluded from homie discovery
+            clear = clear || (entity.options.hasOwnProperty('homie') && !entity.options.homie);
 
             if (clear) {
-                logger.debug(`Clearing Home Assistant config '${data.topic}'`);
+                logger.debug(`Clearing Homie config '${data.topic}'`);
                 const topic = data.topic.substring(this.discoveryTopic.length + 1);
                 this.mqtt.publish(topic, null, {retain: true, qos: 0}, this.discoveryTopic, false, false);
+                console.log(`published!!!`);
             }
         } else if ((data.topic === this.statusTopic || data.topic === defaultStatusTopic) &&
             data.message.toLowerCase() === 'online') {
@@ -1442,10 +1447,10 @@ export default class HomeAssistant extends Extension {
         const identifierPostfix = entity.isGroup() ?
             `zigbee2mqtt_${this.getEncodedBaseTopic()}` : 'zigbee2mqtt';
 
-        // Allow device name to be overriden by homeassistant config
+        // Allow device name to be overriden by homie config
         let deviceName = entity.name;
-        if (typeof entity.options.homeassistant?.name === 'string') {
-            deviceName = entity.options.homeassistant.name;
+        if (typeof entity.options.homie?.name === 'string') {
+            deviceName = entity.options.homie.name;
         }
 
         const payload: KeyValue = {
@@ -1499,11 +1504,12 @@ export default class HomeAssistant extends Extension {
     private getDiscoveryTopic(config: DiscoveryEntry, entity: Device | Group): string {
         const key = entity.isDevice() ? entity.ieeeAddr : `${this.getEncodedBaseTopic()}_${entity.ID}`;
         return `${config.type}/${key}/${config.object_id}/config`;
+        return `${key}/${entity.name}/`;
     }
 
     private async publishDeviceTriggerDiscover(device: Device, key: string, value: string, force=false): Promise<void> {
-        const haConfig = device.options.homeassistant;
-        if (device.options.hasOwnProperty('homeassistant') && (haConfig == null ||
+        const haConfig = device.options.homie;
+        if (device.options.hasOwnProperty('homie') && (haConfig == null ||
                 (haConfig.hasOwnProperty('device_automation') && typeof haConfig === 'object' &&
                     haConfig.device_automation == null))) {
             return;

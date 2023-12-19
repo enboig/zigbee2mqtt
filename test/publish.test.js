@@ -1101,6 +1101,7 @@ describe('Publish', () => {
         expect(MQTT.publish.mock.calls[1]).toEqual(["zigbee2mqtt/bulb_color", stringify({state: 'ON', brightness: 200}), {"qos": 0, "retain": false}, expect.any(Function)]);
     });
 
+    //TODO: Homie
     it('Home Assistant: should set state', async () => {
         settings.set(['homeassistant'], true);
         const device = zigbeeHerdsman.devices.bulb_color;
@@ -1115,6 +1116,7 @@ describe('Publish', () => {
         expect(JSON.parse(MQTT.publish.mock.calls[0][1])).toStrictEqual({state: 'ON'});
     });
 
+    //TODO: Homie
     it('Home Assistant: should not set state when color temperature is also set and device is already on', async () => {
         settings.set(['homeassistant'], true);
         const device = controller.zigbee.resolveEntity(zigbeeHerdsman.devices.bulb_color.ieeeAddr);
@@ -1131,6 +1133,7 @@ describe('Publish', () => {
         expect(JSON.parse(MQTT.publish.mock.calls[0][1])).toStrictEqual({state: 'ON', color_temp: 100, color_mode: 'color_temp'});
     });
 
+    //TODO: Homie
     it('Home Assistant: should set state when color temperature is also set and device is off', async () => {
         settings.set(['homeassistant'], true);
         const device = controller.zigbee.resolveEntity(zigbeeHerdsman.devices.bulb_color.ieeeAddr);
@@ -1152,6 +1155,7 @@ describe('Publish', () => {
         );
     });
 
+    //TODO: Homie
     it('Home Assistant: should not set state when color is also set', async () => {
         settings.set(['homeassistant'], true);
         const device = controller.zigbee.resolveEntity(zigbeeHerdsman.devices.bulb_color.ieeeAddr);

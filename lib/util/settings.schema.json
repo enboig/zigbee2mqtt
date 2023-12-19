@@ -45,6 +45,50 @@
         }
       ]
     },
+    "homie": {
+      "title": "Homie integration",
+      "requiresRestart": true,
+      "description": "Homie integration (MQTT discovery)",
+      "default": false,
+      "oneOf": [
+        {
+          "type": "boolean",
+          "title": "Homie (simple)"
+        },
+        {
+          "type": "object",
+          "title": "Homie (advanced)",
+          "properties": {
+            "legacy_triggers": {
+              "type": "boolean",
+              "title": "Homie legacy triggers",
+              "description": "Homie legacy triggers, when enabled Zigbee2mqt will send an empty 'action' or 'click' after one has been send. A 'sensor_action' and 'sensor_click' will be discoverd",
+              "default": true
+            },
+            "discovery_topic": {
+              "type": "string",
+              "title": "Homie discovery topic",
+              "description": "Homie discovery topic",
+              "requiresRestart": true,
+              "examples": ["homie"]
+            },
+            "legacy_entity_attributes": {
+              "type": "boolean",
+              "title": "Homie legacy entity attributes",
+              "description": "Homie legacy entity attributes, when enabled Zigbee2MQTT will add state attributes to each entity, additional to the separate entities and devices it already creates",
+              "default": true
+            },
+            "status_topic": {
+              "type": "string",
+              "title": "Homie status topic",
+              "description": "Homie status topic",
+              "requiresRestart": true,
+              "examples": ["homie/status"]
+            }
+          }
+        }
+      ]
+    },
     "permit_join": {
       "type": "boolean",
       "default": false,
@@ -705,6 +749,32 @@
           "description": "Home Assistant legacy triggers, when enabled Zigbee2mqt will send an empty 'action' or 'click' after one has been send. A 'sensor_action' and 'sensor_click' will be discovered",
           "default": true
         },
+        "homie_discovery_topic": {
+          "type": "string",
+          "title": "Homie discovery topic",
+          "description": "Homie discovery topic",
+          "requiresRestart": true,
+          "examples": ["homie"]
+        },
+        "homie_legacy_entity_attributes": {
+          "type": "boolean",
+          "title": "Homie legacy entity attributes",
+          "description": "Homie legacy entity attributes, when enabled Zigbee2MQTT will add state attributes to each entity, additional to the separate entities and devices it already creates",
+          "default": true
+        },
+        "homie_status_topic": {
+          "type": "string",
+          "title": "Homie status topic",
+          "description": "Homie status topic",
+          "requiresRestart": true,
+          "examples": ["homie/status"]
+        },
+        "homie_legacy_triggers": {
+          "type": "boolean",
+          "title": "Homie legacy triggers",
+          "description": "Homie legacy triggers, when enabled Zigbee2mqt will send an empty 'action' or 'click' after one has been send. A 'sensor_action' and 'sensor_click' will be discovered",
+          "default": true
+        },
         "soft_reset_timeout": {
           "type": "number",
           "minimum": 0,
@@ -871,6 +941,17 @@
                   "type": "string",
                   "title": "Home Assistant name",
                   "description": "Name of the device in Home Assistant"
+              }
+          }
+        },
+        "homie": {
+          "type": ["object", "null"],
+          "title": "Homie",
+          "properties": {
+              "name": {
+                  "type": "string",
+                  "title": "Homie name",
+                  "description": "Name of the device in Homie"
               }
           }
         }
